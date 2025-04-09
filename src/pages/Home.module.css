@@ -1,0 +1,65 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    gap: 7rem; /* 달력과 오른쪽 패널 사이 간격 */
+    transition: all 0.3s ease;
+  }
+  
+  /* 달력 래퍼 */
+  .calendarWrap {
+    transition: transform 0.3s ease;
+  }
+  
+  /* 날짜가 선택되면 달력이 왼쪽으로 살짝 이동한 것처럼 보이게 */
+  .selected {
+    transform: translateX(-100px);
+  }
+  
+  .sidePanel {
+    width: 300px;
+    min-height: 200px;
+    padding: 1rem;
+    background-color: #f8f8f8;
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    text-align: left;
+  }
+  
+  .card {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ccc;
+    background: white;
+    border-radius: 0.5rem;
+  }
+  
+  .title {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  
+  .author {
+    font-size: 0.85rem;
+    color: #888;
+  }
+  
+  .empty {
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .writeButton {
+    margin-top: 5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.6rem 1.2rem;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
