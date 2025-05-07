@@ -1,0 +1,74 @@
+/* 화면 전체를 감싸는 부모 컨테이너 */
+/* 전체 화면 중앙 정렬 */
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 200vh;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    background-color: #ffffff;
+  }
+  
+  /* 로그인 박스 */
+  .login-container {
+    background-color: #ffffff;
+    width: 550px;
+    height: 650px;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+  }
+  
+    
+    /* 제목 */
+    .login-title {
+      font-size: 64px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    
+    /* 입력창 */
+    .login-input {
+      width: 80%;
+      height: 45px;
+      margin-bottom: 15px;
+      padding-left: 10px;
+      border: 1px solid #000;
+      border-radius: 25px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    
+    /* 로그인 버튼 */
+    .login-button {
+      width: 80%;
+      height: 45px;
+      background-color: #d9d9d9;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    
+    /* 링크들 */
+    .login-links {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      font-size: 14px;
+    }
+    .login-links a {
+      text-decoration: none;
+      color: #000;
+    }
+    
