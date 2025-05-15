@@ -2,8 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: fit-content;
   font-family: 'Pretendard', sans-serif;
-  transform: scale(1.2)
+  transform: scale(1.4)
 }
 
 .header {
@@ -14,8 +15,14 @@
   margin-bottom: 1rem;
 }
 
+.button {
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+}
+
 .title {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
 }
 
@@ -69,11 +76,11 @@
   transition: background-color 0.2s ease;
 }
 
-.dayActive:hover {
+.currentMonth:hover {
   background-color: #f0f0f0;
 }
 
-.dayActive {
+.currentMonth {
   color: #000;
 }
 

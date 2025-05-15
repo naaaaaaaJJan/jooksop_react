@@ -25,11 +25,11 @@ export default function Calendar({ onSelect, selectedDate }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <button onClick={goToPrevMonth}>‹</button>
+        <button className={styles.button} onClick={goToPrevMonth}>‹</button>
         <span className={styles.title}>
           {format(currentDate, 'yyyy MMM').toUpperCase()}.
         </span>
-        <button onClick={goToNextMonth}>›</button>
+        <button className={styles.button} onClick={goToNextMonth}>›</button>
       </div>
 
       <div className={styles.weekdays}>
@@ -58,7 +58,7 @@ export default function Calendar({ onSelect, selectedDate }) {
                   key={dIdx}
                   className={`
                     ${styles.day}
-                    ${type !== 'current' ? styles.otherMonth : styles.dayActive}
+                    ${type !== 'current' ? styles.otherMonth : styles.currentMonth}
                     ${isTodayDate ? styles.today : ''}
                     ${isSelectedDate ? styles.selected : ''}
                   `}
