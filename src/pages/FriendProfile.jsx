@@ -11,7 +11,7 @@ export default function FriendProfile() {
   return (
     <div className={`${styles.container}`}>
       {/* 프로필 + 달력 묶는 영역 */}
-      <div className={`${styles.topBox} ${selectedDate ? styles.expanded : ''}`}>
+      <div className={`${styles.leftBox} ${selectedDate ? styles.expanded : ''}`}>
         <div className={`${styles.profileBox} ${selectedDate ? styles.profileExpanded : ''}`}>
           <img src={friendInfo.profileImage} alt="프로필" className={styles.image} />
           <div className={styles.textBox}>
