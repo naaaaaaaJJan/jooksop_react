@@ -1,0 +1,105 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  font-family: 'Pretendard', sans-serif;
+  transform: scale(1.4)
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.button {
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 52px);
+  column-gap: 12px;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.weekday {
+  padding: 4px 0;
+  color: #333;
+  text-align: center;
+}
+
+.weekday:nth-child(1) {
+  color: #e74c3c; /* 일요일: 빨강 */
+}
+
+.weekday:nth-child(7) {
+  color: #3498db; /* 토요일: 파랑 */
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: none;
+}
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 52px);
+  column-gap: 12px;
+  justify-content: center;
+}
+
+.day {
+  width: 52px;
+  height: 52px;
+  line-height: 52px;
+  font-size: 1rem;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.currentMonth:hover {
+  background-color: #f0f0f0;
+}
+
+.currentMonth {
+  color: #000;
+}
+
+.dayEmpty {
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.today {
+  background-color: #dfe4ea;
+  border-radius: 50%;
+}
+
+.selected {
+  background-color: #636e72; /* 원하는 색상 */
+  color: white;
+  border-radius: 50%;
+}
+
+.otherMonth {
+  color: #ccc;
+}
