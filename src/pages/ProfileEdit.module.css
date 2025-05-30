@@ -1,0 +1,176 @@
+.edit {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.editWrapper {
+  background-color: #ffffff;
+  height: 1024px;
+  width: 1440px;
+}
+
+.overlap {
+  height: 841px;
+  left: 142px;
+  position: relative;
+  top: 98px;
+  width: 1185px;
+}
+
+.view {
+  height: 841px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 1185px;
+}
+
+.overlapGroup {
+  background-color: #ffffff;
+  box-shadow: 4px 4px 20px 5px #66666640;
+  height: 841px;
+  position: relative;
+  width: 1183px;
+}
+
+.div {
+  background-color: #d9d9d9;
+  border-radius: 50px;
+  height: 38px;
+  left: 907px;
+  position: absolute;
+  top: 415px;
+  width: 131px;
+}
+
+.duplicationCheck {
+  color: #000000;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 24px;
+  font-weight: 400;
+  left: 24px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 3px;
+}
+
+.image {
+  height: 47px;
+  left: 1100px;
+  position: absolute;
+  top: 29px;
+  width: 47px;
+}
+
+.eComplete {
+  color: #8d8d8d;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 32px;
+  font-weight: 400;
+  left: 522px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 781px;
+}
+
+.img {
+  height: 418px;
+  left: 104px;
+  object-fit: cover;
+  position: absolute;
+  top: 188px;
+  width: 418px;
+}
+
+.eImage {
+  color: #8d8d8d;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 32px;
+  font-weight: 400;
+  left: 276px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 586px;
+}
+
+.eName {
+  color: #000000;
+  font-family: "AppleSDGothicNeoH0O-Regular", Helvetica;
+  font-size: 80px;
+  font-weight: 400;
+  left: 610px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 303px;
+}
+
+.eId {
+  color: #000000;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 48px;
+  font-weight: 400;
+  left: 612px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 401px;
+}
+
+.view2 {
+  height: 43px;
+  left: 612px;
+  position: absolute;
+  top: 481px;
+  width: 306px;
+}
+
+.eText {
+  color: #000000;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 32px;
+  font-weight: 400;
+  left: 151px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+}
+
+.overlapGroupWrapper {
+  height: 38px;
+  left: 0;
+  position: absolute;
+  top: 5px;
+  width: 133px;
+}
+
+.overlapGroup2 {
+  background-color: #d9d9d9;
+  border-radius: 50px;
+  height: 38px;
+  position: relative;
+  width: 131px;
+}
+
+.eIntroduction {
+  color: #000000;
+  font-family: "AppleSDGothicNeoL00-Regular", Helvetica;
+  font-size: 24px;
+  font-weight: 400;
+  left: 45px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 3px;
+}
