@@ -1,4 +1,3 @@
-// src/components/WriteEditor.jsx
 import styles from './WriteEditor.module.css';
 import { useState } from 'react';
 
