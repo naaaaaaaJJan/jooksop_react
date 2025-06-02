@@ -1,0 +1,127 @@
+/* 전체 화면을 덮는 반투명 오버레이 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+/* 중앙에 뜨는 카드 팝업 스타일 */
+.card {
+  display: flex;
+  width: 700px;
+  height: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 카드 내부 레이아웃: 좌측 프로필 이미지 영역 */
+.left {
+  flex: 1;
+  text-align: center;
+}
+
+.profileImage {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 100px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.imageLabel {
+  margin-top: 8px;
+  color: gray;
+  font-size: 14px;
+}
+
+/* 우측 입력 필드 영역 */
+.right {
+  flex: 2;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.usernameInput {
+  font-size: 24px;
+  font-weight: bold;
+  border: none;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+.useridRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.useridInput {
+  font-size: 18px;
+  border: none;
+  flex: 1;
+  outline: none;
+}
+
+.checkButton {
+  background-color: #e0e0e0;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.introRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.introLabel {
+  background-color: #eee;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.introInput {
+  flex: 1;
+  border: none;
+  font-size: 16px;
+  outline: none;
+}
+
+/* 저장 버튼 */
+.saveButton {
+  position: absolute;
+  bottom: 20px;
+  right: 40px;
+  color: gray;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* 닫기 버튼 (오른쪽 상단) */
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}

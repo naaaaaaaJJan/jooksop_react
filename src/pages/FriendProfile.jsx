@@ -1,13 +1,19 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styles from './FriendProfile.module.css';
 import Calendar from '../components/Calendar';
 import { friendInfo } from '../mock/friendData';
 import { friendPosts } from '../mock/friendPosts';
 
 export default function FriendProfile() {
+
   const today = new Date().toISOString().slice(0, 10);
   const [selectedDate, setSelectedDate] = useState(today);
   const posts = friendPosts[selectedDate] || [];
+
+  if (!friend) {
+    return <div className={styles.container}>존재하지 않는 친구입니다.</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -21,6 +27,7 @@ export default function FriendProfile() {
           <div className={styles.nameRow}>
             <h2 className={styles.username}>{friendInfo.username}</h2>
             <p className={styles.userid}>{friendInfo.userid}</p>
+
           </div>
           <p className={styles.intro}>{friendInfo.intro}</p>
         </div>

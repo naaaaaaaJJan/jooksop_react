@@ -71,3 +71,16 @@
     cursor: pointer;
     font-weight: 600;
   }
+
+  .myButton {
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #aaa;
+    z-index: 10;
+  }

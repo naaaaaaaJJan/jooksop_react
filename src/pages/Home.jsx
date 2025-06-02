@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ useNavigate import
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
@@ -35,18 +36,24 @@ const mockData = {
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showWritePopup, setShowWritePopup] = useState(false);
+  const navigate = useNavigate(); 
 
   const posts = selectedDate ? mockData[selectedDate] || [] : [];
 
   return (
     <div className={styles.container}>
+      {/* ✅ MY 버튼 클릭 시 /user-profile로 이동 */}
+      <button className={styles.myButton} onClick={() => navigate('/user-profile')}>
+        MY
+      </button>
+
       <div className={`${styles.calendarWrap} ${selectedDate ? styles.selected : ''}`}>
-      <Calendar
-        onSelect={(date) => {
-        setSelectedDate((prev) => (prev === date ? null : date));
-        }}
-        selectedDate={selectedDate}
-      />
+        <Calendar
+          onSelect={(date) => {
+            setSelectedDate((prev) => (prev === date ? null : date));
+          }}
+          selectedDate={selectedDate}
+        />
       </div>
 
       {selectedDate && (
@@ -67,6 +74,7 @@ export default function Home() {
           </button>
         </div>
       )}
+
       {showWritePopup && (
         <WriteModal
           onClose={() => setShowWritePopup(false)}
