@@ -1,9 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom';
-import React from "react";
-import styles from "./Login.module.css"; 
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import styles from "./Login.module.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [isFindIdOpen, setIsFindIdOpen] = useState(false);
+
+  const user = null;
 
   const handleLogin = () => {
     navigate("/");
@@ -23,7 +26,7 @@ export default function Login() {
         </button>
 
         <div className={styles.loginLinks}>
-          <Link to="/FindId">아이디찾기</Link>
+          <Link to="/Findid">아이디 찾기</Link>
           <Link to="/signup">회원가입</Link>
           <Link to="/FindPasswd">비밀번호 초기화</Link>
         </div>

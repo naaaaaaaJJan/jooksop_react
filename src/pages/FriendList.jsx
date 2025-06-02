@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './FriendList.module.css';
 import { friendInfo } from '../mock/friendData';
+import { useNavigate } from 'react-router-dom';
 
 export default function FriendList() {
   const friends = friendInfo;
   const carouselRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (carouselRef.current && friends.length >= 3) {
@@ -22,6 +24,24 @@ export default function FriendList() {
     }
   }, [friends]);
 
+  const handleClick = (id) => {
+    navigate(`/friend/${id}`);
+  };
+
+  const renderCard = (friend) => (
+    <div
+      className={styles.friendCard}
+      key={friend.id}
+      onClick={() => handleClick(friend.id)}
+    >
+      <img
+        src={friend.image}
+        alt={friend.name}
+        className={styles.friendImage}
+      />
+    </div>
+  );
+
   return (
     <div className={styles.FriendListScreen}>
       <div className={styles.div}>
@@ -31,32 +51,14 @@ export default function FriendList() {
           </div>
         </div>
 
-        {/* n = 1 또는 2 */}
         {friends.length <= 2 ? (
           <div className={styles.centerContainer}>
-            {friends.map((friend) => (
-              <div className={styles.friendCard} key={friend.id}>
-                <img
-                  src={friend.image}
-                  alt={friend.name}
-                  className={styles.friendImage}
-                />
-              </div>
-            ))}
+            {friends.map(renderCard)}
           </div>
         ) : (
-          // n ≥ 3
           <div className={styles.carouselWrapper} ref={carouselRef}>
             <div className={styles.carousel}>
-              {friends.map((friend) => (
-                <div className={styles.friendCard} key={friend.id}>
-                  <img
-                    src={friend.image}
-                    alt={friend.name}
-                    className={styles.friendImage}
-                  />
-                </div>
-              ))}
+              {friends.map(renderCard)}
             </div>
           </div>
         )}
