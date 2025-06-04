@@ -6,10 +6,10 @@ import Signup from './pages/Signup';
 import Write from './pages/Write';
 import UserProfile from './pages/UserProfile';
 import FriendProfile from './pages/FriendProfile';
-import ProfileEdit from './pages/ProfileEdit';
 import FriendList from './pages/FriendList';
 import StorageBox from './pages/StorageBox';
-import Setting from './pages/setting';
+import Setting from './pages/Setting';
+import ProfileEditor from './components/ProfileEditor';
 import './App.css';
 
 function App() {
@@ -21,9 +21,8 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
       <Route path="/write" element={<Write />} />
-      <Route path="/friend/:id" element={<FriendProfile />} />
       <Route path="/user-profile" element={<UserProfile />} />
-      <Route path="/profile-eidt" element={<ProfileEdit />} />
+      <Route path="/friend/:id" element={<FriendProfile />} />
       <Route path="/friend-list" element={<FriendList />} />
       <Route path="/storagebox" element={<StorageBox />} />
       <Route path="/setting" element={<Setting />} />

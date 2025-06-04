@@ -76,3 +76,9 @@
 .loginLinks a:hover {
   color: #555555; /* 링크 호버 효과 */
 }
+
+.linkButton {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}

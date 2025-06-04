@@ -78,3 +78,16 @@
   object-fit: cover;
   border-radius: 40px;
 }
+
+.addFriendText {
+  margin-top: 50px;
+  text-align: center;
+  color: #727272;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.addFriendText:hover {
+  text-decoration: underline;
+}

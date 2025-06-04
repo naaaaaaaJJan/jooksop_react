@@ -94,3 +94,17 @@
   text-align: center;
   font-family: "AppleSDGothicNeoL00-Regular", Helvetica, sans-serif;
 }
+
+.homeButton {
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #aaa;
+  z-index: 10;
+}
+
