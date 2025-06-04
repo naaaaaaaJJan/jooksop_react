@@ -5,14 +5,14 @@ import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
 
 const mockData = {
-  '2025.04.05': [
+  '2025.06.05': [
     {
       id: 1,
       title: '죽숲과 쌀나무 탈출',
       author: '죽숲',
     },
   ],
-  '2025.04.07': [
+  '2025.06.07': [
     {
       id: 2,
       title: '하늘이 맑았던 날',
@@ -24,7 +24,7 @@ const mockData = {
       author: '나연, 윤나, 예은, 혜원, 태영',
     },
   ],
-  '2025.04.04': [
+  '2025.06.04': [
     {
       id: 3,
       title: '우리 과가 통폐합된다고?',
@@ -40,9 +40,37 @@ export default function Home() {
 
   const posts = selectedDate ? mockData[selectedDate] || [] : [];
 
+  const handleCreateDiaryAndOpenModal = async () => {
+    const isoDate = selectedDate.replace(/\./g, '-');
+  
+    const newDiary = {
+      content: "안녕하세요",
+      date: isoDate, // 문자열로 그대로 전달
+      taggedUserIds: null,
+    };
+  
+    try {
+      const res = await fetch(`http://localhost:8080/api/diaries/test123`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newDiary),
+      });
+  
+      if (!res.ok) throw new Error('다이어리 생성 실패');
+  
+      const result = await res.json();
+      console.log('✅ 다이어리 생성 성공:', result);
+      setShowWritePopup(true); // 모달 띄우기
+    } catch (err) {
+      console.error('❌ 다이어리 생성 실패:', err);
+      alert('다이어리 생성에 실패했습니다.');
+    }
+  };
+
   return (
     <div className={styles.container}>
-      {/* ✅ MY 버튼 클릭 시 /user-profile로 이동 */}
       <button className={styles.myButton} onClick={() => navigate('/user-profile')}>
         MY
       </button>
@@ -69,7 +97,7 @@ export default function Home() {
           ) : (
             <p className={styles.empty}>작성된 글이 없습니다.</p>
           )}
-          <button className={styles.writeButton} onClick={() => setShowWritePopup(true)}>
+          <button className={styles.writeButton} onClick={handleCreateDiaryAndOpenModal}>
             글작성
           </button>
         </div>
@@ -79,6 +107,7 @@ export default function Home() {
         <WriteModal
           onClose={() => setShowWritePopup(false)}
           date={selectedDate}
+          userId="test123"
         />
       )}
     </div>

@@ -4,14 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { SlSizeFullscreen } from 'react-icons/sl';
 import { TfiClose } from 'react-icons/tfi';
 
-export default function WriteModal({ date, onClose }) {
+export default function WriteModal({ date, onClose, userId }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const navigate = useNavigate();
 
   const handleSave = () => {
-    console.log("모달 저장:", { title, content, date });
-    onClose();
+    console.log("작성한 제목:", title);
+    console.log("작성한 내용:", content);
+    onClose(); // 저장 후 모달 닫기
   };
 
   const handleFullscreen = () => {
