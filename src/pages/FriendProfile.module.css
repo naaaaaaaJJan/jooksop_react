@@ -10,13 +10,11 @@
   margin-bottom: 6rem;
 }
 
-.mainSection {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: flex-start;
-  padding: 1.5rem;
-  gap: 3rem;
+.image {
+  width: 220px;
+  height: 220px;
+  border-radius: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .calendarBox {

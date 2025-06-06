@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
@@ -35,6 +34,7 @@ export default function Home() {
       }
     };
 
+
     fetchPosts();
   }, [selectedDate, userId]);
 
@@ -66,6 +66,62 @@ export default function Home() {
     } catch (err) {
       console.error('❌ 다이어리 생성 실패:', err);
       alert('다이어리 생성에 실패했습니다.');
+    }
+  };
+
+  const handleCreateDiaryAndOpenModal = async () => {
+    const isoDate = selectedDate.replace(/\./g, '-');
+
+    const newDiary = {
+      content: "안녕하세요",
+      date: isoDate,
+      taggedUserIds: null,
+    };
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/diaries/test123`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newDiary),
+      });
+
+      if (!res.ok) throw new Error('다이어리 생성 실패');
+
+      const result = await res.json();
+      console.log('✅ 다이어리 생성 성공:', result);
+      setShowWritePopup(true);
+    } catch (err) {
+      console.error('❌ 다이어리 생성 실패:', err);
+      alert('다이어리 생성에 실패했습니다.');
+    }
+  };
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('로그인 정보가 없습니다.');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('로그아웃 실패');
+
+      localStorage.removeItem('token');
+      alert('로그아웃 되었습니다.');
+      navigate('/login');
+    } catch (error) {
+      console.error(error);
+      alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
 

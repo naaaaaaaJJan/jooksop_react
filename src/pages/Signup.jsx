@@ -5,13 +5,38 @@ import { useNavigate } from "react-router-dom";
 function Signup() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(""); // nickname
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isIdChecked, setIsIdChecked] = useState(false); // 중복확인 여부
 
-  const handleSignup = () => {
+  const handleCheckDuplicateId = async () => {
+    if (!userId) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/auth/check-id?userId=${encodeURIComponent(userId)}`);
+      const isDuplicateText = await response.text();
+      console.log("check-id 응답:", isDuplicateText);
+
+      if (isDuplicateText === "true") {
+        alert("이미 사용 중인 아이디입니다.");
+        setIsIdChecked(false);
+      } else {
+        alert("사용 가능한 아이디입니다.");
+        setIsIdChecked(true);
+      }
+    } catch (error) {
+      console.error("중복 확인 에러:", error);
+      alert("서버 오류가 발생했습니다.");
+    }
+  };
+
+  const handleSignup = async () => {
     if (!name || !email || !userId || !password || !confirmPassword) {
       alert("모든 항목을 입력해주세요.");
       return;
@@ -20,8 +45,38 @@ function Signup() {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-    console.log({ name, email, userId, password });
-    navigate("/login");
+    if (!isIdChecked) {
+      alert("아이디 중복확인을 해주세요.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          password,
+          confirmPassword,
+          nickname: name,
+          email,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(result.message || "회원가입 성공");
+        navigate("/login");
+      } else {
+        alert(result.message || "회원가입 실패");
+      }
+    } catch (error) {
+      console.error("회원가입 에러:", error);
+      alert("서버 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -60,13 +115,16 @@ function Signup() {
               placeholder="아이디"
               className={styles.inputField}
               value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+              onChange={(e) => {
+                setUserId(e.target.value);
+                setIsIdChecked(false); // 아이디 변경 시 중복확인 다시 필요
+              }}
             />
             <div className={styles.signupGroup2}>
               <button
                 type="button"
                 className={styles.Sid1}
-                onClick={() => alert("중복확인 기능 구현 필요")}
+                onClick={handleCheckDuplicateId}
               >
                 중복확인
               </button>
