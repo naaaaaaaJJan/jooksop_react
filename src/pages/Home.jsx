@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ useNavigate import
+import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
@@ -36,19 +36,19 @@ const mockData = {
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showWritePopup, setShowWritePopup] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const posts = selectedDate ? mockData[selectedDate] || [] : [];
 
   const handleCreateDiaryAndOpenModal = async () => {
     const isoDate = selectedDate.replace(/\./g, '-');
-  
+
     const newDiary = {
       content: "안녕하세요",
-      date: isoDate, // 문자열로 그대로 전달
+      date: isoDate,
       taggedUserIds: null,
     };
-  
+
     try {
       const res = await fetch(`http://localhost:8080/api/diaries/test123`, {
         method: 'POST',
@@ -57,15 +57,42 @@ export default function Home() {
         },
         body: JSON.stringify(newDiary),
       });
-  
+
       if (!res.ok) throw new Error('다이어리 생성 실패');
-  
+
       const result = await res.json();
       console.log('✅ 다이어리 생성 성공:', result);
-      setShowWritePopup(true); // 모달 띄우기
+      setShowWritePopup(true);
     } catch (err) {
       console.error('❌ 다이어리 생성 실패:', err);
       alert('다이어리 생성에 실패했습니다.');
+    }
+  };
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('로그인 정보가 없습니다.');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('로그아웃 실패');
+
+      localStorage.removeItem('token');
+      alert('로그아웃 되었습니다.');
+      navigate('/login');
+    } catch (error) {
+      console.error(error);
+      alert('로그아웃 중 오류가 발생했습니다.');
     }
   };
 

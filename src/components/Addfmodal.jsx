@@ -3,38 +3,82 @@ import { useState } from 'react';
 import { TfiClose } from 'react-icons/tfi';
 import axios from 'axios';
 
-export default function Addfmodal({ onClose }) {
-  const [searchId, setSearchId] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
-  const [error, setError] = useState("");
+export default function Addfmodal({ onClose, requesterUserId }) {
+  const [searchId, setSearchId] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [error, setError] = useState('');
 
   const handleSearch = async () => {
     if (!searchId.trim()) {
-      setError("아이디를 입력해주세요.");
+      setError('아이디를 입력해주세요.');
+      setSearchResults([]);
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('로그인이 필요합니다.');
       return;
     }
 
     try {
-      const response = await axios.get("/api/user/search", {
-        params: { userId: searchId }
-      });
-      setSearchResult(response.data);
-      setError("");
+      const res = await fetch(
+        `http://localhost:8080/api/friends/search?userId=${searchId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await res.json();
+      console.log('📦 받은 응답:', data);
+
+      if (res.status === 401) {
+        setError('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
+        return;
+      }
+
+      if (Array.isArray(data)) {
+        setSearchResults(data);
+        setError('');
+      } else {
+        console.error('⚠️ 예외 응답:', data);
+        setError(data.message || '알 수 없는 오류 발생');
+        setSearchResults([]);
+      }
     } catch (err) {
-      setSearchResult(null);
-      setError("해당 아이디를 가진 사용자가 없습니다.");
+      console.error('❌ 검색 실패:', err);
+      setError('검색 중 오류가 발생했습니다.');
+      setSearchResults([]);
     }
   };
 
-  const handleAddFriend = async () => {
+  const handleAddFriend = async (targetUserId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     try {
-      await axios.post("/api/friends/add", {
-        friendId: searchResult.userId
-      });
-      alert("친구 요청을 보냈습니다.");
+      await axios.post(
+        `http://localhost:8080/api/friends/${requesterUserId}`,
+        { targetUserId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      alert('친구 요청을 보냈습니다.');
       onClose();
     } catch (err) {
-      alert("친구 추가에 실패했습니다.");
+      console.error('❌ 친구 추가 실패:', err.response?.data || err.message);
+      alert('친구 추가에 실패했습니다.');
     }
   };
 
@@ -62,13 +106,24 @@ export default function Addfmodal({ onClose }) {
 
         {error && <div className={styles.errorMessage}>{error}</div>}
 
-        {searchResult && (
+        {searchResults.length > 0 && (
           <div className={styles.resultBox}>
-            <p><strong>닉네임:</strong> {searchResult.nickname}</p>
-            <p><strong>아이디:</strong> {searchResult.userId}</p>
-            <button onClick={handleAddFriend} className={styles.addButton}>
-              친구 추가
-            </button>
+            {searchResults.map((user) => (
+              <div key={user.id} className={styles.userItem}>
+                <p>
+                  <strong>닉네임:</strong> {user.nickname}
+                </p>
+                <p>
+                  <strong>아이디:</strong> {user.userId}
+                </p>
+                <button
+                  onClick={() => handleAddFriend(user.userId)}
+                  className={styles.addButton}
+                >
+                  친구 추가
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>

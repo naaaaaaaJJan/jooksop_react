@@ -20,9 +20,10 @@ function Signup() {
 
     try {
       const response = await fetch(`/api/auth/check-id?userId=${encodeURIComponent(userId)}`);
-      const isDuplicate = await response.json();
+      const isDuplicateText = await response.text();
+      console.log("check-id 응답:", isDuplicateText);
 
-      if (isDuplicate) {
+      if (isDuplicateText === "true") {
         alert("이미 사용 중인 아이디입니다.");
         setIsIdChecked(false);
       } else {
@@ -50,7 +51,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +117,7 @@ function Signup() {
               value={userId}
               onChange={(e) => {
                 setUserId(e.target.value);
-                setIsIdChecked(false); // 아이디 입력이 변경되면 다시 중복확인 필요
+                setIsIdChecked(false); // 아이디 변경 시 중복확인 다시 필요
               }}
             />
             <div className={styles.signupGroup2}>

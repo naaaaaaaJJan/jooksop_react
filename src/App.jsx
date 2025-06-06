@@ -22,7 +22,7 @@ function App() {
       <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
       <Route path="/write" element={<Write />} />
       <Route path="/user-profile" element={<UserProfile />} />
-      <Route path="/friend/:id" element={<FriendProfile />} />
+      <Route path="/profile/:id" element={<FriendProfile />} />
       <Route path="/friend-list" element={<FriendList />} />
       <Route path="/storagebox" element={<StorageBox />} />
       <Route path="/setting" element={<Setting />} />
