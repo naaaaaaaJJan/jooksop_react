@@ -16,11 +16,14 @@
   width: 100%;
   font-size: 1rem;
   padding: 0.75rem;
+  padding-bottom: 1.2rem; /* ✅ 하단 패딩 추가 */
   border: none;
   font-family: inherit;
   resize: none;
   overflow: hidden;
   box-sizing: border-box;
+  min-height: 150px;       /* ✅ 최소 높이 설정 */
+  line-height: 1.6;        /* ✅ 줄 간격 확보 */
 }
 
 .titleInput:focus,

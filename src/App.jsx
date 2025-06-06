@@ -20,7 +20,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-      <Route path="/write" element={<Write />} />
+      <Route path="/write/:diaryId" element={<Write />} />
       <Route path="/user-profile" element={<UserProfile />} />
       <Route path="/profile/:id" element={<FriendProfile />} />
       <Route path="/friend-list" element={<FriendList />} />
