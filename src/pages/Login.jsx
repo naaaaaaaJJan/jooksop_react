@@ -22,13 +22,12 @@ export default function Login() {
         // 토큰과 userId를 localStorage에 저장
         localStorage.setItem("token", data);
         localStorage.setItem("userId", userId);
-
+        
         alert("로그인 성공: " + message);
         navigate("/");
       } else {
         alert("로그인 실패: " + message);
-      }
-      
+      }      
     } catch (error) {
       console.error("로그인 요청 중 오류:", error);
       alert("서버 오류가 발생했습니다.");

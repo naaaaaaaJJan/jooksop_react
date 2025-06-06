@@ -1,19 +1,13 @@
 .container {
   display: flex;
-  height: 85vh;
-  justify-content: space-around;
-  flex-direction: row;
-  align-items: center;
-  transition: all 0.3s ease;
-  gap: 0 5rem;
+  flex-direction: column;
 }
 
 .profileBox {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
-  gap: 1rem;
+  gap: 0.7rem;
+  margin-bottom: 6rem;
 }
 
 .image {
@@ -24,43 +18,28 @@
 }
 
 .calendarBox {
-  margin-right: 5rem;
-  transition: all 0.3s ease;
+  margin-left: 5rem;
+  flex: 1;
+  max-width: 750px;
 }
 
 .postsBox {
-  min-width: 300px;
+  flex: 1;
   min-height: 300px;
-  padding: 1rem;
+  max-width: 380px;
   background-color: #f8f8f8;
   border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
   text-align: left;
-  flex: 1;
 }
 
-.leftBox {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5rem;
-  margin-left: 5rem;
-  transition: all 0.3s ease;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.expanded {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 3rem;
-}
-
-.profileExpanded {
-  flex-direction: row;
-  align-items: center;
-  text-align: left;
+.image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .textBox {
@@ -71,26 +50,24 @@
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
+  margin-bottom: 0;
 }
 
 .username {
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 1.9rem;
+  line-height: 0.7;
 }
 
 .userid {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #666;
   margin: 0;
 }
 
 .intro {
-  font-size: 1.5rem;
-  color: #444444;
+  font-size: 1.2rem;
+  color: #444;
   margin: 0;
-}
-
-.expanded .image {
-  width: 100px;
-  height: 100px;
+  line-height: 0.8rem;
 }

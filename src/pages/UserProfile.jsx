@@ -64,7 +64,7 @@ function UserProfile() {
   if (!user) {
     return <div className={styles.Userscreen}>유저 정보를 불러올 수 없습니다.</div>;
   }
-
+  
   return (
     <div className={styles.Userscreen}>
       <button className={styles.homeButton} onClick={() => navigate('/')}>
@@ -110,7 +110,7 @@ function UserProfile() {
         </button>
       </div>
 
-      {isEditing && <ProfileEditor user={user} onClose={() => setIsEditing(false)} />}
+{isEditing && <ProfileEditor user={user} onClose={() => setIsEditing(false)} />}
     </div>
   );
 }
