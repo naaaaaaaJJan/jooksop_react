@@ -1,59 +1,59 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ useNavigate import
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
 
-const mockData = {
-  '2025.06.05': [
-    {
-      id: 1,
-      title: '죽숲과 쌀나무 탈출',
-      author: '죽숲',
-    },
-  ],
-  '2025.06.07': [
-    {
-      id: 2,
-      title: '하늘이 맑았던 날',
-      author: '은하',
-    },
-    {
-      id: 4,
-      title: '레전드 시간낭비 간담회 참석',
-      author: '나연, 윤나, 예은, 혜원, 태영',
-    },
-  ],
-  '2025.06.04': [
-    {
-      id: 3,
-      title: '우리 과가 통폐합된다고?',
-      author: '죽솦',
-    },
-  ],
-};
-
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [showWritePopup, setShowWritePopup] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const posts = selectedDate ? mockData[selectedDate] || [] : [];
+  const token = localStorage.getItem("token");
+  const userId = token ? jwtDecode(token).sub : null;
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!selectedDate || !userId) return;
+
+      const isoDate = selectedDate.replace(/\./g, '-');
+
+      try {
+        const res = await fetch(`http://localhost:8080/api/diaries?date=${isoDate}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error('글 불러오기 실패');
+        const data = await res.json();
+        setPosts(data);
+      } catch (err) {
+        console.error('글 목록 가져오기 실패:', err);
+        setPosts([]);
+      }
+    };
+
+    fetchPosts();
+  }, [selectedDate, userId]);
 
   const handleCreateDiaryAndOpenModal = async () => {
     const isoDate = selectedDate.replace(/\./g, '-');
+    const token = localStorage.getItem("token");
   
     const newDiary = {
-      content: "안녕하세요",
-      date: isoDate, // 문자열로 그대로 전달
+      content: "na테스트으",
+      date: isoDate,
       taggedUserIds: null,
     };
   
     try {
-      const res = await fetch(`http://localhost:8080/api/diaries/test123`, {
+      const res = await fetch("http://localhost:8080/api/diaries", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` // ✅ JWT 토큰을 Authorization 헤더에 추가
         },
         body: JSON.stringify(newDiary),
       });
@@ -62,7 +62,7 @@ export default function Home() {
   
       const result = await res.json();
       console.log('✅ 다이어리 생성 성공:', result);
-      setShowWritePopup(true); // 모달 띄우기
+      setShowWritePopup(true);
     } catch (err) {
       console.error('❌ 다이어리 생성 실패:', err);
       alert('다이어리 생성에 실패했습니다.');
@@ -88,10 +88,10 @@ export default function Home() {
         <div className={styles.sidePanel}>
           <h3>{selectedDate}</h3>
           {posts.length > 0 ? (
-            posts.map((post) => (
-              <div key={post.id} className={styles.card}>
-                <div className={styles.title}>• {post.title}</div>
-                <div className={styles.author}>@{post.author}</div>
+            posts.map((post, index) => (
+              <div key={index} className={styles.card}>
+                <div className={styles.title}>• {post.content || '제목 없음'}</div>
+                <div className={styles.author}>@{post.userId}</div>
               </div>
             ))
           ) : (
@@ -107,7 +107,7 @@ export default function Home() {
         <WriteModal
           onClose={() => setShowWritePopup(false)}
           date={selectedDate}
-          userId="test123"
+          userId={userId}
         />
       )}
     </div>
