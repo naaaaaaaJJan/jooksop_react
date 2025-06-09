@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import useDiarySocket from '../hooks/useDiarySocket';
 import debounce from 'lodash.debounce';
-import styles from './write.module.css';
+import styles from './Write.module.css';
 
 export default function WritePage() {
   const { state } = useLocation();
