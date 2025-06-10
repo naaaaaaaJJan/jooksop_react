@@ -20,7 +20,7 @@ export default function Login({ setIsLoggedIn }) {
           password,
         }
       );
-
+      console.log('로그인 응답:', response.data);
       const { success, message, data } = response.data;
 
       if (success) {
