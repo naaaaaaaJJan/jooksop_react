@@ -28,7 +28,7 @@ export default function Login({ setIsLoggedIn }) {
         localStorage.setItem("userId", userId);
 
         alert("로그인 성공: " + message);
-        setIsLoggedIn(true);
+        //setIsLoggedIn(true);
         navigate("/");
       } else {
         alert("로그인 실패: " + message);
