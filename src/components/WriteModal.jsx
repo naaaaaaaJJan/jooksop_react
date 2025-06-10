@@ -21,6 +21,7 @@ export default function WriteModal({
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
+  const myUserId = userId;
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -30,7 +31,13 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-
+  
+    // 🛑 내가 보낸 메시지라면 무시 (루프 방지)
+    if (msg.userId === myUserId) {
+      console.log('🔁 내 메시지 수신 → 무시');
+      return;
+    }
+  
     if (msg.type === 'TAG_ADD') {
       console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
@@ -44,7 +51,7 @@ export default function WriteModal({
       if (msg.title !== undefined) setTitle(msg.title);
       if (msg.content !== undefined) setContent(msg.content);
     }
-  }, []);
+  }, [myUserId]);
 
   const { send } = useDiarySocket({
     diaryId,
