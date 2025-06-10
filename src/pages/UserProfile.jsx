@@ -77,7 +77,7 @@ function UserProfile() {
         <div className={styles.profileImageWrapper}>
           <img
             className={styles.image}
-            src={user.profileImageUrl || '../assets/yee_profile.jpg'}
+            src={user.profileImageUrl || 'src\assets\yee_profile.jpg'}
             alt={user.nickname}
           />
         </div>
