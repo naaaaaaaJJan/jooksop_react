@@ -17,12 +17,14 @@ export default function WritePage() {
   const [content, setContent] = useState('');
   const date = new Date().toLocaleDateString();
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://jooksop-backend.onrender.com';
+
   // ✅ 최초 진입 시 서버에서 다이어리 가져오기
   useEffect(() => {
     const fetchDiary = async () => {
       if (!diaryId || !token) return;
       try {
-        const res = await fetch(`http://localhost:8080/api/diaries/${diaryId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/diaries/${diaryId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error('다이어리 불러오기 실패');
@@ -35,7 +37,7 @@ export default function WritePage() {
     };
 
     fetchDiary();
-  }, [diaryId, token]);
+  }, [diaryId, token, API_BASE_URL]);
 
   // ✅ WebSocket 연결 및 수신
   const { send } = useDiarySocket({
@@ -43,7 +45,6 @@ export default function WritePage() {
     token,
     onMessage: (msg) => {
       if (msg.type === 'EDIT') {
-        // console.log('📥 수신:', msg);
         setTitle(msg.title ?? '');
         setContent(msg.content ?? '');
       }

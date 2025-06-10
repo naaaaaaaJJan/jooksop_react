@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import axios from 'axios';
 import styles from './FriendList.module.css';
 import { useNavigate } from 'react-router-dom';
 import Addfmodal from '../components/Addfmodal';
+
+const API_BASE_URL = 'https://jooksop-backend.onrender.com/api';
 
 export default function FriendList() {
   const [friends, setFriends] = useState([]);
@@ -13,82 +15,56 @@ export default function FriendList() {
   const requesterUserId = localStorage.getItem('userId');
   const token = localStorage.getItem('token');
 
-  // 친구 목록과 프로필을 불러오는 함수
-  const fetchFriendProfiles = async () => {
+  const fetchFriendProfiles = useCallback(async () => {
     if (!requesterUserId || !token) {
       console.warn('⚠ requesterUserId or token is missing');
+      setFriends([]);
       return;
     }
 
     try {
-      console.log('📡 Fetching friend IDs for user:', requesterUserId);
-
-      const res = await fetch(`http://localhost:8080/api/friends/${requesterUserId}`, {
-        method: 'GET',
+      // 1. 친구 ID 목록 요청
+      const friendIdsResponse = await axios.get(`${API_BASE_URL}/friends/${requesterUserId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
       });
 
-      console.log('🔍 친구 ID 목록 응답 상태:', res.status);
-
-      if (!res.ok) {
-        throw new Error('친구 ID 목록 불러오기 실패');
-      }
-
-      const friendIds = await res.json();
-      console.log('👥 친구 ID 배열 (raw):', friendIds);
+      const friendIds = friendIdsResponse.data;
 
       if (!Array.isArray(friendIds) || friendIds.length === 0) {
         setFriends([]);
         return;
       }
 
-      console.log('👀 friendIds 배열 요소 예:', friendIds[0]);
-
-      // friendIds 가 객체 배열일 경우 userId 필드 추출, 아니면 그대로 id 사용
-      const ids = friendIds.map((friend) => {
-        if (typeof friend === 'object' && friend !== null) {
-          return friend.userId || friend.id || JSON.stringify(friend); // 안전하게 아이디 꺼내기
-        }
-        return friend; // 문자열 아이디인 경우
-      });
-
-      console.log('🆔 추출된 친구 ID 배열:', ids);
-
-      console.log('📦 친구 프로필들 불러오기 시작');
-
-      const fetchedProfiles = await Promise.all(
-        ids.map(async (id) => {
-          console.log('🔗 프로필 요청 URL:', `http://localhost:8080/api/users/${id}/profile`);
-
-          const profileRes = await fetch(`http://localhost:8080/api/users/${id}/profile`, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          console.log(`📝 프로필 응답 상태(${id}):`, profileRes.status);
-
-          if (!profileRes.ok) {
-            throw new Error(`프로필 불러오기 실패: ${id}`);
+      // 친구 ID만 추출 (객체인 경우 키가 userId 또는 id 일 수 있음)
+      const ids = friendIds
+        .map((friend) => {
+          if (typeof friend === 'object' && friend !== null) {
+            return friend.userId || friend.id || null;
           }
-
-          return await profileRes.json();
+          return friend;
         })
+        .filter(Boolean);
+
+      // 2. 각 친구 프로필 동시 요청
+      const profilePromises = ids.map((id) =>
+        axios.get(`${API_BASE_URL}/users/${id}/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => res.data)
       );
 
-      setFriends(fetchedProfiles);
+      const profiles = await Promise.all(profilePromises);
+      setFriends(profiles);
     } catch (error) {
       console.error('❌ 친구 정보 불러오기 실패:', error);
+      alert('친구 목록을 불러오는 중 오류가 발생했습니다.');
       setFriends([]);
     }
-  };
+  }, [requesterUserId, token]);
 
-  // 친구 추가 함수
   const handleAddFriend = async (friendId) => {
     if (!requesterUserId || !token) {
       alert('로그인이 필요합니다.');
@@ -97,11 +73,8 @@ export default function FriendList() {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/friends/add',
-        {
-          userId: requesterUserId,
-          friendId: friendId,
-        },
+        `${API_BASE_URL}/friends/add`,
+        { userId: requesterUserId, friendId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,14 +83,11 @@ export default function FriendList() {
         }
       );
 
-      console.log('친구 추가 응답:', response.data);
-
       if (response.data.success) {
         alert('친구 추가 성공!');
-        // 친구 목록 재조회 호출
         fetchFriendProfiles();
       } else {
-        alert('친구 추가 실패: ' + response.data.message);
+        alert('친구 추가 실패: ' + (response.data.message || '알 수 없는 오류'));
       }
     } catch (error) {
       console.error('친구 추가 오류:', error);
@@ -127,7 +97,7 @@ export default function FriendList() {
 
   useEffect(() => {
     fetchFriendProfiles();
-  }, [requesterUserId]);
+  }, [fetchFriendProfiles]);
 
   useEffect(() => {
     if (carouselRef.current && friends.length >= 3) {
@@ -143,11 +113,9 @@ export default function FriendList() {
         container.scrollLeft = scrollLeft;
       }
     }
-    console.log('💡 friends 배열 내용:', friends);
   }, [friends]);
 
   const handleClick = (friendId) => {
-    // 친구 카드 클릭 시 동작 예: 친구 프로필 페이지 이동
     navigate(`/profile/${friendId}`);
   };
 

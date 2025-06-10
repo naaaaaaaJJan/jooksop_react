@@ -1,115 +1,187 @@
-// ProfileEditor.jsx
-import React, { useState, useRef } from 'react';
-import styles from './ProfileEditor.module.css';
+import styles from './WriteModal.module.css';
+import { useEffect, useState, useCallback } from 'react';
+import debounce from 'lodash.debounce';
+import { useNavigate } from 'react-router-dom';
+import { SlSizeFullscreen } from 'react-icons/sl';
+import { TfiClose } from 'react-icons/tfi';
+import useDiarySocket from '../hooks/useDiarySocket';
 
-function ProfileEditor({ user = {}, onClose }) {
-  const [username, setUsername] = useState(user.username || '');
-  const [userid, setUserid] = useState(user.userid || '');
-  const [intro, setIntro] = useState(user.intro || '');
-  const [image, setImage] = useState(user.image || '');
-  const [isCheckingId, setIsCheckingId] = useState(false);
+const API_BASE_URL = 'https://jooksop-backend.onrender.com'; 
+// const API_BASE_URL = 'https://portfolio-backend-api.onrender.com'; // 필요 시 교체
 
-  const fileInputRef = useRef();
+export default function WriteModal({
+  date,
+  onClose,
+  userId,
+  initialTitle = '',
+  initialContent = '',
+  diaryId,
+}) {
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
+  const [taggedUsers, setTaggedUsers] = useState([]);
+  const [newTagId, setNewTagId] = useState('');
+  const [showTagInput, setShowTagInput] = useState(false);
 
-  const handleImageClick = () => {
-    fileInputRef.current.click();
-  };
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleSocketMessage = useCallback((msg) => {
+    if (msg.error) {
+      alert(msg.error);
+      return;
     }
+
+    if (msg.type === 'TAG_ADD') {
+      console.log('✅ TAG_ADD 메시지 수신:', msg);
+      setTaggedUsers((prev) => {
+        const updated = prev.includes(msg.taggedUserId) ? prev : [...prev, msg.taggedUserId];
+        console.log('🟢 UI에 반영할 태그 목록:', updated);
+        return updated;
+      });
+    } else if (msg.type === 'TAG_REMOVE') {
+      setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
+    } else if (msg.type === 'EDIT') {
+      if (msg.title !== undefined) setTitle(msg.title);
+      if (msg.content !== undefined) setContent(msg.content);
+    }
+  }, []);
+
+  const { send } = useDiarySocket({
+    diaryId,
+    token,
+    onMessage: handleSocketMessage,
+  });
+
+  const handleTagAdd = () => {
+    if (!newTagId.trim()) return;
+
+    console.log('📤 TAG 추가 요청:', newTagId.trim());
+    send('TAG_ADD', {
+      diaryId,
+      taggedUserId: newTagId.trim(),
+    });
+
+    setNewTagId('');
+    setShowTagInput(false);
   };
 
-  const handleIdCheck = () => {
-    setIsCheckingId(true);
-    setTimeout(() => {
-      alert(userid === 'takenID' ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.');
-      setIsCheckingId(false);
-    }, 1000);
-  };
+  useEffect(() => {
+    const fetchDiary = async () => {
+      if (!diaryId) return;
 
-  const handleSave = () => {
-    console.log({ username, userid, intro, image });
-    alert('프로필이 저장되었습니다.');
-    onClose(); // 저장 후 닫기
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/diaries/${diaryId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error('다이어리 불러오기 실패');
+
+        const data = await res.json();
+        console.log('📥 다이어리 데이터:', data);
+
+        setTitle(data.title || '');
+        setContent(data.content || '');
+        setTaggedUsers(data.taggedUserIds || []);
+      } catch (err) {
+        console.error('❌ 다이어리 로드 실패:', err.message);
+      }
+    };
+
+    fetchDiary();
+  }, [diaryId, token]);
+
+  const debouncedSendEdit = useCallback(
+    debounce((updatedTitle, updatedContent) => {
+      if (!diaryId) return;
+      send('EDIT', {
+        diaryId,
+        title: updatedTitle,
+        content: updatedContent,
+      });
+      console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
+    }, 800),
+    [diaryId, send]
+  );
+
+  useEffect(() => {
+    debouncedSendEdit(title, content);
+  }, [title, content, debouncedSendEdit]);
+
+  const handleFullscreen = () => {
+    navigate(`/write/${diaryId}`, {
+      state: { title, content },
+    });
+    onClose();
   };
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.card}>
+      <div className={styles.popup}>
         <div className={styles.header}>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.fullscreenBtn} onClick={handleFullscreen}>
+            <SlSizeFullscreen />
+          </button>
+          <button className={styles.closeBtn} onClick={onClose}>
+            <TfiClose />
+          </button>
         </div>
 
-        <div className={styles.left}>
-          <img
-            src={image}
-            alt="프로필"
-            className={styles.profileImage}
-          />
+        <div className={styles.editor}>
+          {date && <div className={styles.date}>{date}</div>}
+
           <input
-            type="file"
-            ref={fileInputRef}
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleImageChange}
-          />
-          <div
-            className={styles.imageLabel}
-            onClick={handleImageClick}
-            style={{ cursor: 'pointer' }}
-          >
-            IMAGE
-          </div>
-        </div>
-
-        <div className={styles.right}>
-          <input
-            className={styles.usernameInput}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onFocus={(e) => e.target.select()}
+            className={styles.titleInput}
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
 
-          <div className={styles.useridRow}>
-            <input
-              className={styles.useridInput}
-              value={userid}
-              onChange={(e) => setUserid(e.target.value)}
-              onFocus={(e) => e.target.select()}
-            />
-            <button
-              className={styles.checkButton}
-              onClick={handleIdCheck}
-              disabled={isCheckingId}
-            >
-              중복확인
-            </button>
+          <div className={styles.tagArea}>
+            {taggedUsers.length > 0 &&
+              taggedUsers.map((id) => (
+                <span key={id} className={styles.tagChip}>
+                  {id}
+                  <button
+                    className={styles.removeTagBtn}
+                    onClick={() => {
+                      send('TAG_REMOVE', { diaryId, taggedUserId: id });
+                      setTaggedUsers((prev) => prev.filter((v) => v !== id));
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+
+            {showTagInput ? (
+              <input
+                className={styles.tagInput}
+                value={newTagId}
+                onChange={(e) => setNewTagId(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleTagAdd();
+                  if (e.key === 'Escape') setShowTagInput(false);
+                }}
+                autoFocus
+              />
+            ) : (
+              <button className={styles.tagAddBtn} onClick={() => setShowTagInput(true)}>
+                @
+              </button>
+            )}
           </div>
 
-          <div className={styles.introRow}>
-            <div className={styles.introLabel}>소개</div>
-            <input
-              className={styles.introInput}
-              value={intro}
-              onChange={(e) => setIntro(e.target.value)}
-              onFocus={(e) => e.target.select()}
-            />
-          </div>
-        </div>
-
-        <div className={styles.saveButton} onClick={handleSave}>
-          변경완료
+          <textarea
+            className={styles.textarea}
+            placeholder="내용을 입력하세요..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
         </div>
       </div>
     </div>
   );
 }
-
-export default ProfileEditor;

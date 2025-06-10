@@ -9,6 +9,8 @@ function UserProfile() {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [isEditing, setIsEditing] = useState(false); // 프로필 편집 모달 상태
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     console.log('📦 사용자 토큰:', token);
@@ -19,7 +21,7 @@ function UserProfile() {
       return;
     }
 
-    fetch('http://localhost:8080/api/users/me', {
+    fetch(`${API_BASE_URL}/api/users/me`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -51,7 +53,7 @@ function UserProfile() {
         alert('유저 정보를 가져오지 못했습니다.');
         navigate('/login');
       });
-  }, [navigate]);
+  }, [navigate, API_BASE_URL]);
 
   const handleProfileEdit = () => {
     setIsEditing(true);
@@ -64,7 +66,7 @@ function UserProfile() {
   if (!user) {
     return <div className={styles.Userscreen}>유저 정보를 불러올 수 없습니다.</div>;
   }
-  
+
   return (
     <div className={styles.Userscreen}>
       <button className={styles.homeButton} onClick={() => navigate('/')}>
@@ -110,7 +112,7 @@ function UserProfile() {
         </button>
       </div>
 
-{isEditing && <ProfileEditor user={user} onClose={() => setIsEditing(false)} />}
+      {isEditing && <ProfileEditor user={user} onClose={() => setIsEditing(false)} />}
     </div>
   );
 }

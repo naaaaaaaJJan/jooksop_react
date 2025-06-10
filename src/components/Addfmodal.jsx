@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { TfiClose } from 'react-icons/tfi';
 import axios from 'axios';
 
+const BASE_URL = 'https://jooksop-backend.onrender.com/api';
+
 export default function Addfmodal({ onClose, requesterUserId }) {
   const [searchId, setSearchId] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -23,7 +25,7 @@ export default function Addfmodal({ onClose, requesterUserId }) {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/friends/search?userId=${searchId}`,
+        `${BASE_URL}/api/friends/search?userId=${encodeURIComponent(searchId)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +66,7 @@ export default function Addfmodal({ onClose, requesterUserId }) {
 
     try {
       await axios.post(
-        `http://localhost:8080/api/friends/${requesterUserId}`,
+        `${BASE_URL}/api/friends/${requesterUserId}`,
         { targetUserId },
         {
           headers: {

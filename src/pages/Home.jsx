@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; 
+
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);

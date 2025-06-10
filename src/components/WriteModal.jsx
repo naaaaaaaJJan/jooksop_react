@@ -6,6 +6,8 @@ import { SlSizeFullscreen } from 'react-icons/sl';
 import { TfiClose } from 'react-icons/tfi';
 import useDiarySocket from '../hooks/useDiarySocket';
 
+const API_BASE_URL = 'https://jooksop-backend.onrender.com'; 
+
 export default function WriteModal({
   date,
   onClose,
@@ -28,7 +30,7 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-  
+
     if (msg.type === 'TAG_ADD') {
       console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
@@ -42,8 +44,8 @@ export default function WriteModal({
       if (msg.title !== undefined) setTitle(msg.title);
       if (msg.content !== undefined) setContent(msg.content);
     }
-  }, [setTaggedUsers, setTitle, setContent]);
-  
+  }, []);
+
   const { send } = useDiarySocket({
     diaryId,
     token,
@@ -66,19 +68,19 @@ export default function WriteModal({
   useEffect(() => {
     const fetchDiary = async () => {
       if (!diaryId) return;
-  
+
       try {
-        const res = await fetch(`http://localhost:8080/api/diaries/${diaryId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/diaries/${diaryId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (!res.ok) throw new Error('다이어리 불러오기 실패');
-  
+
         const data = await res.json();
         console.log('📥 다이어리 데이터:', data);
-  
+
         setTitle(data.title || '');
         setContent(data.content || '');
         setTaggedUsers(data.taggedUserIds || []);
@@ -86,7 +88,7 @@ export default function WriteModal({
         console.error('❌ 다이어리 로드 실패:', err.message);
       }
     };
-  
+
     fetchDiary();
   }, [diaryId, token]);
 
@@ -151,8 +153,7 @@ export default function WriteModal({
                     ×
                   </button>
                 </span>
-              ))
-            }
+              ))}
 
             {showTagInput ? (
               <input
@@ -166,7 +167,9 @@ export default function WriteModal({
                 autoFocus
               />
             ) : (
-              <button className={styles.tagAddBtn} onClick={() => setShowTagInput(true)}>@</button>
+              <button className={styles.tagAddBtn} onClick={() => setShowTagInput(true)}>
+                @
+              </button>
             )}
           </div>
 

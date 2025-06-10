@@ -3,31 +3,36 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Login.module.css";
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
 
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/login", {
-        userId,
-        password,
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/api/auth/login`,
+        {
+          userId,
+          password,
+        }
+      );
 
       const { success, message, data } = response.data;
 
       if (success) {
-        // 토큰과 userId를 localStorage에 저장
         localStorage.setItem("token", data);
         localStorage.setItem("userId", userId);
-        
+
         alert("로그인 성공: " + message);
+        setIsLoggedIn(true);
         navigate("/");
       } else {
         alert("로그인 실패: " + message);
-      }      
+      }
     } catch (error) {
       console.error("로그인 요청 중 오류:", error);
       alert("서버 오류가 발생했습니다.");

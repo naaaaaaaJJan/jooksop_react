@@ -12,6 +12,8 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isIdChecked, setIsIdChecked] = useState(false); // 중복확인 여부
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+
   const handleCheckDuplicateId = async () => {
     if (!userId) {
       alert("아이디를 입력해주세요.");
@@ -19,7 +21,14 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(`/api/auth/check-id?userId=${encodeURIComponent(userId)}`);
+      const response = await fetch(
+        `${API_BASE_URL}/api/auth/check-id?userId=${encodeURIComponent(userId)}`
+      );
+      // 백엔드가 JSON으로 { isDuplicate: true/false } 반환 시 아래처럼 사용하세요.
+      // const data = await response.json();
+      // if(data.isDuplicate) { ... }
+
+      // 만약 문자열 "true"/"false" 반환이라면 아래 코드 유지
       const isDuplicateText = await response.text();
       console.log("check-id 응답:", isDuplicateText);
 
@@ -51,7 +60,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/signup", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -157,10 +166,14 @@ function Signup() {
           </div>
         </div>
 
-        <div className={styles.buttonBox} onClick={handleSignup}>
-          <div className={styles.signupGroup3}>
-            <div className={styles.Signupbutton}>가입하기</div>
-          </div>
+        <div className={styles.buttonBox}>
+          <button
+            type="button"
+            className={styles.Signupbutton}
+            onClick={handleSignup}
+          >
+            가입하기
+          </button>
         </div>
       </div>
     </div>
