@@ -1,5 +1,5 @@
 import styles from './WriteModal.module.css';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import { useNavigate } from 'react-router-dom';
 import { SlSizeFullscreen } from 'react-icons/sl';
@@ -21,7 +21,8 @@ export default function WriteModal({
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
-  const myUserId = userId;
+  const lastAppliedTitle = useRef(initialTitle);
+  const lastAppliedContent = useRef(initialContent);
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -31,13 +32,7 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-  
-    // 🛑 내가 보낸 메시지라면 무시 (루프 방지)
-    if (msg.userId === myUserId) {
-      console.log('🔁 내 메시지 수신 → 무시');
-      return;
-    }
-  
+
     if (msg.type === 'TAG_ADD') {
       console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
@@ -48,10 +43,16 @@ export default function WriteModal({
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
     } else if (msg.type === 'EDIT') {
-      if (msg.title !== undefined) setTitle(msg.title);
-      if (msg.content !== undefined) setContent(msg.content);
+      if (msg.title !== undefined) {
+        setTitle(msg.title);
+        lastAppliedTitle.current = msg.title;
+      }
+      if (msg.content !== undefined) {
+        setContent(msg.content);
+        lastAppliedContent.current = msg.content;
+      }
     }
-  }, [myUserId]);
+  }, []);
 
   const { send } = useDiarySocket({
     diaryId,
@@ -102,12 +103,23 @@ export default function WriteModal({
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
       if (!diaryId) return;
-      send('EDIT', {
-        diaryId,
-        title: updatedTitle,
-        content: updatedContent,
-      });
-      console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
+  
+      // 🔒 이전 서버에서 받은 값과 비교해서 달라야 전송
+      if (
+        updatedTitle !== lastAppliedTitle.current ||
+        updatedContent !== lastAppliedContent.current
+      ) {
+        send('EDIT', {
+          diaryId,
+          title: updatedTitle,
+          content: updatedContent,
+        });
+        console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
+  
+        // 💾 내가 보낸 내용을 저장 (서버 반영된 걸로 간주)
+        lastAppliedTitle.current = updatedTitle;
+        lastAppliedContent.current = updatedContent;
+      }
     }, 800),
     [diaryId, send]
   );
