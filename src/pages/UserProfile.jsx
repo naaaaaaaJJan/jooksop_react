@@ -77,7 +77,7 @@ function UserProfile() {
         <div className={styles.profileImageWrapper}>
           <img
             className={styles.image}
-            src={user.profileImageUrl || '/default-profile.png'}
+            src={user.profileImageUrl || '../assets/yee_profile.png'}
             alt={user.nickname}
           />
         </div>
