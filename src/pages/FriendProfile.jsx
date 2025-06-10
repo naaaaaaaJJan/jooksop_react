@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import styles from './FriendProfile.module.css';
 import Calendar from '../components/Calendar';
 import axios from 'axios';
+import yeeProfileImage from '../assets/yee_profile.jpg';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -70,7 +71,7 @@ export default function FriendProfile() {
     <div className={styles.container}>
       <div className={styles.profileBox}>
         <img
-          src={friendInfo.profileImageUrl || 'src/assets/yee_profile.jpg'}
+          src={user.profileImageUrl || yeeProfileImage}
           alt="프로필"
           className={styles.image}
         />

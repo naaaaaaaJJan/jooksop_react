@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './UserProfile.module.css';
 import ProfileEditor from '../components/ProfileEditor';
+import yeeProfileImage from '../assets/yee_profile.jpg';
 
 function UserProfile() {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ function UserProfile() {
         <div className={styles.profileImageWrapper}>
           <img
             className={styles.image}
-            src={user.profileImageUrl || 'src/assets/yee_profile.jpg'}
+            src={user.profileImageUrl || yeeProfileImage}
             alt={user.nickname}
           />
         </div>

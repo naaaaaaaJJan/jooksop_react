@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './FriendList.module.css';
 import { useNavigate } from 'react-router-dom';
 import Addfmodal from '../components/Addfmodal';
+import yeeProfileImage from '../assets/yee_profile.jpg';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -126,7 +127,7 @@ export default function FriendList() {
       onClick={() => handleClick(friend.userId)}
     >
       <img
-        src={friend.profileImageUrl || '/default-profile.png'}
+        src={user.profileImageUrl || yeeProfileImage}
         alt={friend.nickname}
         className={styles.friendImage}
       />
