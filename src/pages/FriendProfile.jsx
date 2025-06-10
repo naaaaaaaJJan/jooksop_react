@@ -71,7 +71,7 @@ export default function FriendProfile() {
     <div className={styles.container}>
       <div className={styles.profileBox}>
         <img
-          src={user.profileImageUrl || yeeProfileImage}
+          src={friend.profileImageUrl || yeeProfileImage}
           alt="프로필"
           className={styles.image}
         />

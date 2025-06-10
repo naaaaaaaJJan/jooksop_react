@@ -3,7 +3,11 @@ import axios from 'axios';
 import styles from './FriendList.module.css';
 import { useNavigate } from 'react-router-dom';
 import Addfmodal from '../components/Addfmodal';
-import yeeProfileImage from '../assets/yee_profile.jpg';
+import yeeProfileImage from '../assets/yee_profile.jpg'; // import 방식으로 이미지 불러오기
+
+// default-profile.png도 사용한다면 이것도 import 해줘야 해!
+// import defaultProfileImage from '../assets/default-profile.png';
+
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,7 +44,7 @@ export default function FriendList() {
 
       // 친구 ID만 추출 (객체인 경우 키가 userId 또는 id 일 수 있음)
       const ids = friendIds
-        .map((friend) => {
+        .map((friend) => { // 여기서 friend는 친구 목록 응답의 각 항목이야
           if (typeof friend === 'object' && friend !== null) {
             return friend.userId || friend.id || null;
           }
@@ -54,11 +58,11 @@ export default function FriendList() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }).then((res) => res.data)
+        }).then((res) => res.data) // 여기서 받아온 res.data가 아래 renderCard의 friend로 전달돼!
       );
 
       const profiles = await Promise.all(profilePromises);
-      setFriends(profiles);
+      setFriends(profiles); // profiles 배열이 friends 상태로 저장돼!
     } catch (error) {
       console.error('❌ 친구 정보 불러오기 실패:', error);
       alert('친구 목록을 불러오는 중 오류가 발생했습니다.');
@@ -120,6 +124,7 @@ export default function FriendList() {
     navigate(`/profile/${friendId}`);
   };
 
+  // renderCard 함수에서 friend 변수를 사용하도록 수정!
   const renderCard = (friend) => (
     <div
       className={styles.friendCard}
@@ -127,7 +132,7 @@ export default function FriendList() {
       onClick={() => handleClick(friend.userId)}
     >
       <img
-        src={user.profileImageUrl || yeeProfileImage}
+        src={friend.profileImageUrl || yeeProfileImage} // <-- 여기서 friend.profileImageUrl 로 수정!
         alt={friend.nickname}
         className={styles.friendImage}
       />
