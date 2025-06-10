@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://naaaaaaaJJan.github.io/sw-project-fe",
+  "homepage": "https://naaaaaaaJJan.github.io/jooksope_react",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
