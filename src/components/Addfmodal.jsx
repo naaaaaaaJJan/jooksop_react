@@ -25,7 +25,7 @@ export default function Addfmodal({ onClose, requesterUserId }) {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/api/friends/search?userId=${encodeURIComponent(searchId)}`,
+        `${API_BASE_URL}/friends/search?userId=${encodeURIComponent(searchId)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
