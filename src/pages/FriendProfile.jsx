@@ -4,7 +4,7 @@ import styles from './FriendProfile.module.css';
 import Calendar from '../components/Calendar';
 import axios from 'axios';
 
-const API_BASE_URL = 'https://jooksop-backend.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function FriendProfile() {
   const { id: friendId } = useParams();

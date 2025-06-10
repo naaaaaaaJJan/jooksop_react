@@ -6,8 +6,7 @@ import { SlSizeFullscreen } from 'react-icons/sl';
 import { TfiClose } from 'react-icons/tfi';
 import useDiarySocket from '../hooks/useDiarySocket';
 
-const API_BASE_URL = 'https://jooksop-backend.onrender.com'; 
-// const API_BASE_URL = 'https://portfolio-backend-api.onrender.com'; // 필요 시 교체
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function WriteModal({
   date,

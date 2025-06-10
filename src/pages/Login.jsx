@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Login.module.css";
 
@@ -9,12 +9,12 @@ export default function Login({ setIsLoggedIn }) {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/auth/login`,
+        `${API_BASE_URL}/auth/login`,
         {
           userId,
           password,

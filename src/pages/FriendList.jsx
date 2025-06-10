@@ -4,7 +4,7 @@ import styles from './FriendList.module.css';
 import { useNavigate } from 'react-router-dom';
 import Addfmodal from '../components/Addfmodal';
 
-const API_BASE_URL = 'https://jooksop-backend.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function FriendList() {
   const [friends, setFriends] = useState([]);

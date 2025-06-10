@@ -12,7 +12,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isIdChecked, setIsIdChecked] = useState(false); // 중복확인 여부
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleCheckDuplicateId = async () => {
     if (!userId) {
@@ -22,13 +22,9 @@ function Signup() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/auth/check-id?userId=${encodeURIComponent(userId)}`
+        `${API_BASE_URL}/auth/check-id?userId=${encodeURIComponent(userId)}`
       );
-      // 백엔드가 JSON으로 { isDuplicate: true/false } 반환 시 아래처럼 사용하세요.
-      // const data = await response.json();
-      // if(data.isDuplicate) { ... }
 
-      // 만약 문자열 "true"/"false" 반환이라면 아래 코드 유지
       const isDuplicateText = await response.text();
       console.log("check-id 응답:", isDuplicateText);
 
@@ -60,7 +56,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

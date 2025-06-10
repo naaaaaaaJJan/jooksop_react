@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
-import { jwtDecode } from 'jwt-decode'; 
+import {jwtDecode} from 'jwt-decode';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -22,7 +23,7 @@ export default function Home() {
     const isoDate = selectedDate.replace(/\./g, '-');
 
     try {
-      const res = await fetch(`http://localhost:8080/api/diaries?date=${isoDate}`, {
+      const res = await fetch(`${API_BASE_URL}/diaries?date=${isoDate}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,13 +36,18 @@ export default function Home() {
       setPosts([]);
     }
   };
+
   useEffect(() => {
     fetchPosts(); 
   }, [selectedDate, userId]);
 
   const handleCreateDiaryAndOpenModal = async () => {
+    if (!selectedDate) {
+      alert('날짜를 선택해주세요.');
+      return;
+    }
+
     const isoDate = selectedDate.replace(/\./g, '-');
-    const token = localStorage.getItem("token");
 
     const newDiary = {
       content: null,
@@ -50,11 +56,11 @@ export default function Home() {
     };
 
     try {
-      const res = await fetch("http://localhost:8080/api/diaries", {
+      const res = await fetch(`${API_BASE_URL}/diaries`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}` // ✅ JWT 토큰을 Authorization 헤더에 추가
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(newDiary),
       });
@@ -71,15 +77,13 @@ export default function Home() {
   };
 
   const handleLogout = async () => {
-    const token = localStorage.getItem('token');
-
     if (!token) {
       alert('로그인 정보가 없습니다.');
       return;
     }
 
     try {
-      const res = await fetch('http://localhost:8080/api/auth/logout', {
+      const res = await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -122,7 +126,7 @@ export default function Home() {
                 className={styles.card}
                 onClick={async () => {
                   try {
-                    const res = await fetch(`http://localhost:8080/api/diaries/${post.id}`, {
+                    const res = await fetch(`${API_BASE_URL}/diaries/${post.id}`, {
                       headers: {
                         Authorization: `Bearer ${token}`,
                       },
@@ -146,6 +150,9 @@ export default function Home() {
           )}
           <button className={styles.writeButton} onClick={handleCreateDiaryAndOpenModal}>
             글작성
+          </button>
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            로그아웃
           </button>
         </div>
       )}

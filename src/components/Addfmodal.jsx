@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { TfiClose } from 'react-icons/tfi';
 import axios from 'axios';
 
-const BASE_URL = 'https://jooksop-backend.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Addfmodal({ onClose, requesterUserId }) {
   const [searchId, setSearchId] = useState('');

@@ -9,7 +9,7 @@ function UserProfile() {
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [isEditing, setIsEditing] = useState(false); // 프로필 편집 모달 상태
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://jooksop-backend.onrender.com";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,7 +21,7 @@ function UserProfile() {
       return;
     }
 
-    fetch(`${API_BASE_URL}/api/users/me`, {
+    fetch(`${API_BASE_URL}/users/me`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',

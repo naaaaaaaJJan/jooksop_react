@@ -6,7 +6,7 @@ import { SlSizeFullscreen } from 'react-icons/sl';
 import { TfiClose } from 'react-icons/tfi';
 import useDiarySocket from '../hooks/useDiarySocket';
 
-const API_BASE_URL = 'https://jooksop-backend.onrender.com'; 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function WriteModal({
   date,
@@ -70,7 +70,7 @@ export default function WriteModal({
       if (!diaryId) return;
 
       try {
-        const res = await fetch(`${API_BASE_URL}/api/diaries/${diaryId}`, {
+        const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
