@@ -45,6 +45,12 @@ export default function WriteModal({
       });
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
+    
+      // 🔥 만약 나 자신이 제거된 대상이라면 모달을 닫고 목록 새로고침
+      if (msg.taggedUserId === userId) {
+        alert('태그에서 제거되어 이 글에 접근할 수 없습니다.');
+        onClose(); // 모달 닫기
+      }
     } else if (msg.type === 'EDIT') {
       isRemoteUpdate.current = true;
       if (msg.title !== undefined) setTitle(msg.title);
