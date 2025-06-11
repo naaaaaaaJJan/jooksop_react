@@ -1,5 +1,5 @@
 import styles from './WriteModal.module.css';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import { useNavigate } from 'react-router-dom';
 import { SlSizeFullscreen } from 'react-icons/sl';
@@ -22,12 +22,20 @@ export default function WriteModal({
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
 
+  const lastSentTitle   = useRef(initialTitle);
+  const lastSentContent = useRef(initialContent);
+  const isRemoteUpdate  = useRef(false);
+
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const handleSocketMessage = useCallback((msg) => {
     if (msg.error) {
       alert(msg.error);
+      return;
+    }
+
+    if (msg.userId === userId) {
       return;
     }
 
@@ -40,11 +48,12 @@ export default function WriteModal({
       });
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
-    } else if (msg.type === 'EDIT') {
-      if (msg.title !== undefined) setTitle(msg.title);
+    }  else if (msg.type === 'EDIT') {
+      isRemoteUpdate.current = true;
+      if (msg.title !== undefined)   setTitle(msg.title);
       if (msg.content !== undefined) setContent(msg.content);
     }
-  }, []);
+  }, [userId]);
 
   const { send } = useDiarySocket({
     diaryId,
@@ -95,12 +104,23 @@ export default function WriteModal({
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
       if (!diaryId) return;
-      send('EDIT', {
-        diaryId,
-        title: updatedTitle,
-        content: updatedContent,
-      });
-      console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
+  
+      // 🔒 이전 서버에서 받은 값과 비교해서 달라야 전송
+      if (
+        updatedTitle !== lastAppliedTitle.current ||
+        updatedContent !== lastAppliedContent.current
+      ) {
+        send('EDIT', {
+          diaryId,
+          title: updatedTitle,
+          content: updatedContent,
+        });
+        console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
+  
+        // 💾 내가 보낸 내용을 저장 (서버 반영된 걸로 간주)
+        lastAppliedTitle.current = updatedTitle;
+        lastAppliedContent.current = updatedContent;
+      }
     }, 800),
     [diaryId, send]
   );

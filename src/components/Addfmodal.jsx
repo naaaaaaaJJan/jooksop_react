@@ -66,7 +66,7 @@ export default function Addfmodal({ onClose, requesterUserId }) {
 
     try {
       await axios.post(
-        `${API_BASE_URL}/api/friends/${requesterUserId}`,
+        `${API_BASE_URL}/friends/${requesterUserId}`,
         { targetUserId },
         {
           headers: {
