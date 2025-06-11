@@ -74,42 +74,28 @@ export default function WriteModal({
     setShowTagInput(false);
   };
 
-  useEffect(() => {
-    // 🚫 서버에서 온 변경이면 무시
-    if (isRemoteUpdate.current) {
-      isRemoteUpdate.current = false;
-      return;
-    }
-  
-    // ✅ 변경사항을 서버에 보냄 (디바운스 포함)
-    debouncedSendEdit(title, content);
-  }, [title, content, debouncedSendEdit]);
-
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
       if (!diaryId) return;
   
-      // 🔒 이전 서버에서 받은 값과 비교해서 달라야 전송
       if (
         updatedTitle !== lastAppliedTitle.current ||
         updatedContent !== lastAppliedContent.current
       ) {
-        send('EDIT', {
-          diaryId,
-          title: updatedTitle,
-          content: updatedContent,
-        });
-        console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
-  
-        // 💾 내가 보낸 내용을 저장 (서버 반영된 걸로 간주)
+        send('EDIT', { diaryId, title: updatedTitle, content: updatedContent });
         lastAppliedTitle.current = updatedTitle;
         lastAppliedContent.current = updatedContent;
       }
     }, 800),
     [diaryId, send]
   );
-
+  
+  // useEffect는 그 다음에 위치
   useEffect(() => {
+    if (isRemoteUpdate.current) {
+      isRemoteUpdate.current = false;
+      return;
+    }
     debouncedSendEdit(title, content);
   }, [title, content, debouncedSendEdit]);
 
