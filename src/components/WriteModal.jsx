@@ -1,3 +1,4 @@
+// WriteModal.jsx
 import styles from './WriteModal.module.css';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import debounce from 'lodash.debounce';
@@ -22,9 +23,9 @@ export default function WriteModal({
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
 
-  const lastSentTitle   = useRef(initialTitle);
-  const lastSentContent = useRef(initialContent);
-  const isRemoteUpdate  = useRef(false);
+  const lastAppliedTitle = useRef(initialTitle);
+  const lastAppliedContent = useRef(initialContent);
+  const isRemoteUpdate = useRef(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -34,23 +35,18 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-
-    if (msg.userId === userId) {
-      return;
-    }
+    if (msg.userId === userId) return;
 
     if (msg.type === 'TAG_ADD') {
-      console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
         const updated = prev.includes(msg.taggedUserId) ? prev : [...prev, msg.taggedUserId];
-        console.log('🟢 UI에 반영할 태그 목록:', updated);
         return updated;
       });
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
-    }  else if (msg.type === 'EDIT') {
+    } else if (msg.type === 'EDIT') {
       isRemoteUpdate.current = true;
-      if (msg.title !== undefined)   setTitle(msg.title);
+      if (msg.title !== undefined) setTitle(msg.title);
       if (msg.content !== undefined) setContent(msg.content);
     }
   }, [userId]);
@@ -61,23 +57,11 @@ export default function WriteModal({
     onMessage: handleSocketMessage,
   });
 
-  const handleTagAdd = () => {
-    if (!newTagId.trim()) return;
-
-    console.log('📤 TAG 추가 요청:', newTagId.trim());
-    send('TAG_ADD', {
-      diaryId,
-      taggedUserId: newTagId.trim(),
-    });
-
-    setNewTagId('');
-    setShowTagInput(false);
-  };
-
+  // ✅ 일기 전체 불러오기 (제목, 내용, 태그 포함)
   useEffect(() => {
-    const fetchDiary = async () => {
-      if (!diaryId) return;
+    if (!diaryId || !token) return;
 
+    const fetchDiary = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}`, {
           headers: {
@@ -88,36 +72,34 @@ export default function WriteModal({
         if (!res.ok) throw new Error('다이어리 불러오기 실패');
 
         const data = await res.json();
-        console.log('📥 다이어리 데이터:', data);
-
         setTitle(data.title || '');
         setContent(data.content || '');
         setTaggedUsers(data.taggedUserIds || []);
+        console.log('✅ 일기 전체 데이터 로딩 성공:', data);
       } catch (err) {
-        console.error('❌ 다이어리 로드 실패:', err.message);
+        console.error('❌ 일기 불러오기 실패:', err.message);
       }
     };
 
     fetchDiary();
   }, [diaryId, token]);
 
+  const handleTagAdd = () => {
+    const trimmedId = newTagId.trim();
+    if (!trimmedId || taggedUsers.includes(trimmedId)) return;
+    send('TAG_ADD', { diaryId, taggedUserId: trimmedId });
+    setNewTagId('');
+    setShowTagInput(false);
+  };
+
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
       if (!diaryId) return;
-  
-      // 🔒 이전 서버에서 받은 값과 비교해서 달라야 전송
       if (
         updatedTitle !== lastAppliedTitle.current ||
         updatedContent !== lastAppliedContent.current
       ) {
-        send('EDIT', {
-          diaryId,
-          title: updatedTitle,
-          content: updatedContent,
-        });
-        console.log('📨 실시간 EDIT 메시지 전송됨:', { title: updatedTitle, content: updatedContent });
-  
-        // 💾 내가 보낸 내용을 저장 (서버 반영된 걸로 간주)
+        send('EDIT', { diaryId, title: updatedTitle, content: updatedContent });
         lastAppliedTitle.current = updatedTitle;
         lastAppliedContent.current = updatedContent;
       }
@@ -126,6 +108,10 @@ export default function WriteModal({
   );
 
   useEffect(() => {
+    if (isRemoteUpdate.current) {
+      isRemoteUpdate.current = false;
+      return;
+    }
     debouncedSendEdit(title, content);
   }, [title, content, debouncedSendEdit]);
 
