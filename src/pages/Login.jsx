@@ -29,7 +29,7 @@ export default function Login({ setIsLoggedIn }) {
 
         alert("로그인 성공: " + message);
         //setIsLoggedIn(true);
-        navigate("/");
+        navigate("/home");
       } else {
         alert("로그인 실패: " + message);
       }
