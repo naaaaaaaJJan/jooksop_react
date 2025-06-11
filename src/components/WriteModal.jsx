@@ -17,6 +17,7 @@ export default function WriteModal({
   initialContent = '',
   diaryId,
   readOnly = false,
+  fetchPosts,
 }) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
@@ -36,7 +37,7 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-    if (msg.userId === userId) return;
+    if (msg.userId === userId && msg.type !== 'TAG_REMOVE') return;
 
     if (msg.type === 'TAG_ADD') {
       setTaggedUsers((prev) => {
@@ -49,6 +50,7 @@ export default function WriteModal({
       // 🔥 만약 나 자신이 제거된 대상이라면 모달을 닫고 목록 새로고침
       if (msg.taggedUserId === userId) {
         alert('태그에서 제거되어 이 글에 접근할 수 없습니다.');
+        fetchPosts?.();
         onClose(); // 모달 닫기
       }
     } else if (msg.type === 'EDIT') {

@@ -191,6 +191,7 @@ export default function Home() {
           initialContent={selectedPost?.content || ''}
           diaryId={selectedPost?.id}
           readOnly={selectedPost?.readOnly}
+          fetchPosts={fetchPosts}
         />
       )}
     </div>
