@@ -62,14 +62,18 @@ export default function WriteModal({
   });
 
   const handleTagAdd = () => {
-    if (!newTagId.trim()) return;
-
-    console.log('📤 TAG 추가 요청:', newTagId.trim());
+    const trimmedId = newTagId.trim();
+    if (!trimmedId || taggedUsers.includes(trimmedId)) return;
+  
+    console.log('📤 TAG 추가 요청:', trimmedId);
     send('TAG_ADD', {
       diaryId,
-      taggedUserId: newTagId.trim(),
+      taggedUserId: trimmedId,
     });
-
+  
+    // ✅ 내 화면에도 즉시 반영
+    setTaggedUsers((prev) => [...prev, trimmedId]);
+  
     setNewTagId('');
     setShowTagInput(false);
   };
