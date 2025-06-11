@@ -141,12 +141,17 @@ export default function Home() {
                     // ✅ 서버에서 snapshot 포함 응답이 있을 수 있으니, 200이면 OK
                     if (res.status === 200) {
                       const updatedPost = await res.json();
+
+                      // ✅ 여기서 로그 찍자
+                      console.log('✅ 글 응답 데이터:', updatedPost);
+                      console.log('✅ 현재 사용자:', userId);
+
+                      const isOwner = updatedPost.userId === userId;
+                      const isTagged = Array.isArray(updatedPost.taggedUserIds) && updatedPost.taggedUserIds.includes(userId);
+
                       setSelectedPost({
                         ...updatedPost,
-                        readOnly: !(
-                          updatedPost.userId === userId ||
-                          (updatedPost.taggedUserIds && updatedPost.taggedUserIds.includes(userId))
-                        ),
+                        readOnly: !(isOwner || isTagged),
                       });
                       setShowWritePopup(true);
                     } else if (res.status === 403) {
