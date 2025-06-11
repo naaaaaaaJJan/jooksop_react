@@ -143,7 +143,10 @@ export default function Home() {
                       const updatedPost = await res.json();
                       setSelectedPost({
                         ...updatedPost,
-                        readOnly: !updatedPost.taggedUserIds || !updatedPost.taggedUserIds.includes(userId),
+                        readOnly: !(
+                          updatedPost.userId === userId ||
+                          (updatedPost.taggedUserIds && updatedPost.taggedUserIds.includes(userId))
+                        ),
                       });
                       setShowWritePopup(true);
                     } else if (res.status === 403) {
