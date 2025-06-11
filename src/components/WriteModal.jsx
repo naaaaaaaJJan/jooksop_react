@@ -57,27 +57,31 @@ export default function WriteModal({
     onMessage: handleSocketMessage,
   });
 
-  // ✅ 태그 목록 초기 불러오기
+  // ✅ 일기 전체 불러오기 (제목, 내용, 태그 포함)
   useEffect(() => {
-    const fetchTags = async () => {
-      if (!diaryId) return;
+    if (!diaryId || !token) return;
 
+    const fetchDiary = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}/tags`, {
+        const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (!res.ok) throw new Error('태그 불러오기 실패');
+
+        if (!res.ok) throw new Error('다이어리 불러오기 실패');
 
         const data = await res.json();
-        setTaggedUsers(data);
-        console.log('✅ 기존 태그 불러오기 완료:', data);
+        setTitle(data.title || '');
+        setContent(data.content || '');
+        setTaggedUsers(data.taggedUserIds || []);
+        console.log('✅ 일기 전체 데이터 로딩 성공:', data);
       } catch (err) {
-        console.error('❌ 태그 로드 실패:', err.message);
+        console.error('❌ 일기 불러오기 실패:', err.message);
       }
     };
-    fetchTags();
+
+    fetchDiary();
   }, [diaryId, token]);
 
   const handleTagAdd = () => {
