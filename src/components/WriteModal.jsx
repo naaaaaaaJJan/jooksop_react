@@ -21,8 +21,10 @@ export default function WriteModal({
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
-  const lastAppliedTitle = useRef(initialTitle);
-  const lastAppliedContent = useRef(initialContent);
+
+  const lastSentTitle   = useRef(initialTitle);
+  const lastSentContent = useRef(initialContent);
+  const isRemoteUpdate  = useRef(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -47,14 +49,9 @@ export default function WriteModal({
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
     }  else if (msg.type === 'EDIT') {
-      if (msg.title !== undefined) {
-        setTitle(msg.title);
-        lastAppliedTitle.current = msg.title;
-      }
-      if (msg.content !== undefined) {
-        setContent(msg.content);
-        lastAppliedContent.current = msg.content;
-      }
+      isRemoteUpdate.current = true;
+      if (msg.title !== undefined)   setTitle(msg.title);
+      if (msg.content !== undefined) setContent(msg.content);
     }
   }, [userId]);
 
