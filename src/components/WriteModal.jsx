@@ -1,3 +1,4 @@
+// WriteModal.jsx
 import styles from './WriteModal.module.css';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import debounce from 'lodash.debounce';
@@ -22,9 +23,9 @@ export default function WriteModal({
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
 
-  const lastAppliedTitle   = useRef(initialTitle);
+  const lastAppliedTitle = useRef(initialTitle);
   const lastAppliedContent = useRef(initialContent);
-  const isRemoteUpdate  = useRef(false);
+  const isRemoteUpdate = useRef(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -34,23 +35,18 @@ export default function WriteModal({
       alert(msg.error);
       return;
     }
-
-    if (msg.userId === userId) {
-      return;
-    }
+    if (msg.userId === userId) return;
 
     if (msg.type === 'TAG_ADD') {
-      console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
         const updated = prev.includes(msg.taggedUserId) ? prev : [...prev, msg.taggedUserId];
-        console.log('🟢 UI에 반영할 태그 목록:', updated);
         return updated;
       });
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
-    }  else if (msg.type === 'EDIT') {
+    } else if (msg.type === 'EDIT') {
       isRemoteUpdate.current = true;
-      if (msg.title !== undefined)   setTitle(msg.title);
+      if (msg.title !== undefined) setTitle(msg.title);
       if (msg.content !== undefined) setContent(msg.content);
     }
   }, [userId]);
@@ -61,19 +57,33 @@ export default function WriteModal({
     onMessage: handleSocketMessage,
   });
 
+  // ✅ 태그 목록 초기 불러오기
+  useEffect(() => {
+    const fetchTags = async () => {
+      if (!diaryId) return;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}/tags`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error('태그 불러오기 실패');
+
+        const data = await res.json();
+        setTaggedUsers(data);
+        console.log('✅ 기존 태그 불러오기 완료:', data);
+      } catch (err) {
+        console.error('❌ 태그 로드 실패:', err.message);
+      }
+    };
+    fetchTags();
+  }, [diaryId, token]);
+
   const handleTagAdd = () => {
     const trimmedId = newTagId.trim();
     if (!trimmedId || taggedUsers.includes(trimmedId)) return;
-  
-    console.log('📤 TAG 추가 요청:', trimmedId);
-    send('TAG_ADD', {
-      diaryId,
-      taggedUserId: trimmedId,
-    });
-  
-    // ✅ 내 화면에도 즉시 반영
-    setTaggedUsers((prev) => [...prev, trimmedId]);
-  
+    send('TAG_ADD', { diaryId, taggedUserId: trimmedId });
     setNewTagId('');
     setShowTagInput(false);
   };
@@ -81,7 +91,6 @@ export default function WriteModal({
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
       if (!diaryId) return;
-  
       if (
         updatedTitle !== lastAppliedTitle.current ||
         updatedContent !== lastAppliedContent.current
@@ -93,8 +102,7 @@ export default function WriteModal({
     }, 800),
     [diaryId, send]
   );
-  
-  // useEffect는 그 다음에 위치
+
   useEffect(() => {
     if (isRemoteUpdate.current) {
       isRemoteUpdate.current = false;
