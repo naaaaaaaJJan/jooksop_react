@@ -22,8 +22,8 @@ export default function WriteModal({
   const [newTagId, setNewTagId] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
 
-  const lastSentTitle   = useRef(initialTitle);
-  const lastSentContent = useRef(initialContent);
+  const lastAppliedTitle   = useRef(initialTitle);
+  const lastAppliedContent = useRef(initialContent);
   const isRemoteUpdate  = useRef(false);
 
   const navigate = useNavigate();
@@ -75,31 +75,15 @@ export default function WriteModal({
   };
 
   useEffect(() => {
-    const fetchDiary = async () => {
-      if (!diaryId) return;
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/diaries/${diaryId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!res.ok) throw new Error('다이어리 불러오기 실패');
-
-        const data = await res.json();
-        console.log('📥 다이어리 데이터:', data);
-
-        setTitle(data.title || '');
-        setContent(data.content || '');
-        setTaggedUsers(data.taggedUserIds || []);
-      } catch (err) {
-        console.error('❌ 다이어리 로드 실패:', err.message);
-      }
-    };
-
-    fetchDiary();
-  }, [diaryId, token]);
+    // 🚫 서버에서 온 변경이면 무시
+    if (isRemoteUpdate.current) {
+      isRemoteUpdate.current = false;
+      return;
+    }
+  
+    // ✅ 변경사항을 서버에 보냄 (디바운스 포함)
+    debouncedSendEdit(title, content);
+  }, [title, content, debouncedSendEdit]);
 
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
