@@ -33,6 +33,10 @@ export default function WriteModal({
       return;
     }
 
+    if (msg.userId === userId) {
+      return;
+    }
+
     if (msg.type === 'TAG_ADD') {
       console.log('✅ TAG_ADD 메시지 수신:', msg);
       setTaggedUsers((prev) => {
@@ -42,7 +46,7 @@ export default function WriteModal({
       });
     } else if (msg.type === 'TAG_REMOVE') {
       setTaggedUsers((prev) => prev.filter((id) => id !== msg.taggedUserId));
-    } else if (msg.type === 'EDIT') {
+    }  else if (msg.type === 'EDIT') {
       if (msg.title !== undefined) {
         setTitle(msg.title);
         lastAppliedTitle.current = msg.title;
@@ -52,7 +56,7 @@ export default function WriteModal({
         lastAppliedContent.current = msg.content;
       }
     }
-  }, []);
+  }, [userId]);
 
   const { send } = useDiarySocket({
     diaryId,
