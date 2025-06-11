@@ -74,7 +74,7 @@ function Signup() {
 
       if (result.success) {
         alert(result.message || "회원가입 성공");
-        navigate("/login");
+        navigate("/");
       } else {
         alert(result.message || "회원가입 실패");
       }

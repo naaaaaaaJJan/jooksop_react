@@ -94,7 +94,7 @@ export default function Home() {
 
       localStorage.removeItem('token');
       alert('로그아웃 되었습니다.');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error(error);
       alert('로그아웃 중 오류가 발생했습니다.');
