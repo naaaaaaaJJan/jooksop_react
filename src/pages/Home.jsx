@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Calendar from '../components/Calendar';
 import styles from './Home.module.css';
 import WriteModal from '../components/WriteModal';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -38,7 +38,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchPosts(); 
+    fetchPosts();
   }, [selectedDate, userId]);
 
   const handleCreateDiaryAndOpenModal = async () => {
@@ -103,9 +103,15 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <button className={styles.myButton} onClick={() => navigate('/user-profile')}>
-        MY
-      </button>
+
+      <div className={styles.topButtons}>
+        <button className={styles.myButton} onClick={() => navigate('/user-profile')}>
+          MY
+        </button>
+        <button className={styles.myButton} onClick={(handleLogout)}>
+          로그아웃
+        </button>
+      </div>
 
       <div className={`${styles.calendarWrap} ${selectedDate ? styles.selected : ''}`}>
         <Calendar
@@ -150,9 +156,6 @@ export default function Home() {
           )}
           <button className={styles.writeButton} onClick={handleCreateDiaryAndOpenModal}>
             글작성
-          </button>
-          <button className={styles.logoutButton} onClick={handleLogout}>
-            로그아웃
           </button>
         </div>
       )}

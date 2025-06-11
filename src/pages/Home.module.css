@@ -73,7 +73,17 @@
   font-weight: 600;
 }
 
-/* 공통 버튼 스타일 (position, left 제거) */
+/* 상단 버튼 영역: MY + 로그아웃 */
+.topButtons {
+  position: absolute;
+  top: 1rem;
+  left: 2rem;
+  display: flex;
+  gap: 1rem; /* MY 버튼과 로그아웃 버튼 사이 간격 */
+  z-index: 10;
+}
+
+/* 버튼 공통 스타일 */
 .myButton {
   font-weight: bold;
   font-size: 1.1rem;
@@ -81,17 +91,4 @@
   background: none;
   border: none;
   color: #aaa;
-  z-index: 10;
-  position: absolute; /* position은 여기서 지정해도 됩니다 */
-  left: 2rem;         /* left도 여기서 지정 */
-}
-
-/* MY 버튼 위치 */
-.myButton.myProfile {
-  top: 2rem;
-}
-
-/* 로그아웃 버튼 위치 */
-.myButton.logout {
-  top: 4.5rem;
 }
