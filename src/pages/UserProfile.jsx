@@ -52,7 +52,7 @@ function UserProfile() {
       .catch(err => {
         console.error('❌ 프로필 로딩 실패:', err);
         alert('유저 정보를 가져오지 못했습니다.');
-        navigate('/login');
+        navigate('/');
       });
   }, [navigate, API_BASE_URL]);
 
@@ -70,7 +70,7 @@ function UserProfile() {
 
   return (
     <div className={styles.Userscreen}>
-      <button className={styles.homeButton} onClick={() => navigate('/')}>
+      <button className={styles.homeButton} onClick={() => navigate('/home')}>
         HOME
       </button>
 
