@@ -137,10 +137,20 @@ export default function Home() {
                         Authorization: `Bearer ${token}`,
                       },
                     });
-                    if (!res.ok) throw new Error('글 상세 불러오기 실패');
-                    const updatedPost = await res.json();
-                    setSelectedPost(updatedPost);
-                    setShowWritePopup(true);
+
+                    // ✅ 서버에서 snapshot 포함 응답이 있을 수 있으니, 200이면 OK
+                    if (res.status === 200) {
+                      const updatedPost = await res.json();
+                      setSelectedPost({
+                        ...updatedPost,
+                        readOnly: !updatedPost.taggedUserIds || !updatedPost.taggedUserIds.includes(userId),
+                      });
+                      setShowWritePopup(true);
+                    } else if (res.status === 403) {
+                      alert('해당 글을 볼 권한이 없습니다.');
+                    } else {
+                      throw new Error('알 수 없는 오류');
+                    }
                   } catch (err) {
                     console.error('❌ 글 상세 불러오기 실패:', err);
                     alert('글을 불러오지 못했습니다.');
@@ -172,6 +182,7 @@ export default function Home() {
           initialTitle={selectedPost?.title || ''}
           initialContent={selectedPost?.content || ''}
           diaryId={selectedPost?.id}
+          readOnly={selectedPost?.readOnly}
         />
       )}
     </div>

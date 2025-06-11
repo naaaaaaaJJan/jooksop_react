@@ -16,6 +16,7 @@ export default function WriteModal({
   initialTitle = '',
   initialContent = '',
   diaryId,
+  readOnly = false,
 }) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
@@ -85,8 +86,11 @@ export default function WriteModal({
   }, [diaryId, token]);
 
   const handleTagAdd = () => {
+    if (readOnly) return; // 🔒 readOnly일 때 동작 막기
+
     const trimmedId = newTagId.trim();
     if (!trimmedId || taggedUsers.includes(trimmedId)) return;
+
     send('TAG_ADD', { diaryId, taggedUserId: trimmedId });
     setNewTagId('');
     setShowTagInput(false);
@@ -94,7 +98,7 @@ export default function WriteModal({
 
   const debouncedSendEdit = useCallback(
     debounce((updatedTitle, updatedContent) => {
-      if (!diaryId) return;
+      if (!diaryId || readOnly) return; // 🔒 readOnly일 땐 전송 막기
       if (
         updatedTitle !== lastAppliedTitle.current ||
         updatedContent !== lastAppliedContent.current
@@ -104,7 +108,7 @@ export default function WriteModal({
         lastAppliedContent.current = updatedContent;
       }
     }, 800),
-    [diaryId, send]
+    [diaryId, send, readOnly] // readOnly 의존성도 추가해야 반영됨
   );
 
   useEffect(() => {
@@ -142,6 +146,7 @@ export default function WriteModal({
             placeholder="제목을 입력하세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            disabled={readOnly}
           />
 
           <div className={styles.tagArea}>
@@ -149,19 +154,21 @@ export default function WriteModal({
               taggedUsers.map((id) => (
                 <span key={id} className={styles.tagChip}>
                   {id}
-                  <button
-                    className={styles.removeTagBtn}
-                    onClick={() => {
-                      send('TAG_REMOVE', { diaryId, taggedUserId: id });
-                      setTaggedUsers((prev) => prev.filter((v) => v !== id));
-                    }}
-                  >
-                    ×
-                  </button>
+                  {!readOnly && (
+                    <button
+                      className={styles.removeTagBtn}
+                      onClick={() => {
+                        send('TAG_REMOVE', { diaryId, taggedUserId: id });
+                        setTaggedUsers((prev) => prev.filter((v) => v !== id));
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
                 </span>
               ))}
 
-            {showTagInput ? (
+            {!readOnly && showTagInput ? (
               <input
                 className={styles.tagInput}
                 value={newTagId}
@@ -173,9 +180,11 @@ export default function WriteModal({
                 autoFocus
               />
             ) : (
-              <button className={styles.tagAddBtn} onClick={() => setShowTagInput(true)}>
-                @
-              </button>
+              !readOnly && (
+                <button className={styles.tagAddBtn} onClick={() => setShowTagInput(true)}>
+                  @
+                </button>
+              )
             )}
           </div>
 
@@ -184,6 +193,7 @@ export default function WriteModal({
             placeholder="내용을 입력하세요..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            disabled={readOnly}
           />
         </div>
       </div>
